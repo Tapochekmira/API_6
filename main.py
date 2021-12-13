@@ -37,6 +37,30 @@ def download_random_comic():
 
     return comic_comment
 
+
+def get_upload_server_url(group_id, vk_token):
+    upload_url = 'https://api.vk.com/method/photos.getWallUploadServer'
+    payload = {
+        'group_id': group_id,
+        'access_token': vk_token,
+        'v': '5.131'
+    }
+    response = requests.get(upload_url, params=payload)
+    check_status(response)
+
+    return response.json()['response']['upload_url']
+
+
+def upload_comic_to_server(group_id, vk_token, directory):
+    upload_server_url = get_upload_server_url(group_id, vk_token)
+    with open(f'{directory}comic.png', 'rb') as file:
+        files = {
+            'file1': file,
+        }
+        response = requests.post(upload_server_url, files=files)
+        check_status(response)
+    response = response.json()
+    return response['server'], response['photo'], response['hash']
 if __name__ == '__main__':
     load_dotenv()
     vk_token = os.environ['ACCESS_TOKEN']
@@ -46,5 +70,6 @@ if __name__ == '__main__':
     Path(directory).mkdir(parents=True, exist_ok=True)
     comic_comment = download_random_comic()
 
+    server, photo, hash = upload_comic_to_server(group_id, vk_token, directory)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

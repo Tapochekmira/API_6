@@ -93,6 +93,11 @@ def post_comic_to_wall(comic_comment, group_id, vk_token, owner_id, photo_id):
     check_status(response)
 
 
+def delete_comic():
+    file_be_deleted_path = Path('images/comic.png')
+    file_be_deleted_path.unlink()
+
+
 if __name__ == '__main__':
     load_dotenv()
     vk_token = os.environ['ACCESS_TOKEN']
@@ -111,3 +116,5 @@ if __name__ == '__main__':
         hash
     )
     post_comic_to_wall(comic_comment, group_id, vk_token, owner_id, photo_id)
+
+    delete_comic()

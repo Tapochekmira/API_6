@@ -77,6 +77,22 @@ def save_comic_to_album(group_id, vk_token, server, photo, hash):
     check_status(response)
     response = response.json()['response'][0]
     return response["owner_id"], response["id"]
+
+
+def post_comic_to_wall(comic_comment, group_id, vk_token, owner_id, photo_id):
+    post_comic_on_wall_url = 'https://api.vk.com/method/wall.post'
+    payload = {
+        'owner_id': f'-{group_id}',
+        'from_group': '1',
+        'message': comic_comment,
+        'attachments': f'photo{owner_id}_{photo_id}',
+        'access_token': vk_token,
+        'v': '5.131'
+    }
+    response = requests.get(post_comic_on_wall_url, params=payload)
+    check_status(response)
+
+
 if __name__ == '__main__':
     load_dotenv()
     vk_token = os.environ['ACCESS_TOKEN']
@@ -87,7 +103,6 @@ if __name__ == '__main__':
     comic_comment = download_random_comic()
 
     server, photo, hash = upload_comic_to_server(group_id, vk_token, directory)
-
     owner_id, photo_id = save_comic_to_album(
         group_id,
         vk_token,
@@ -95,3 +110,4 @@ if __name__ == '__main__':
         photo,
         hash
     )
+    post_comic_to_wall(comic_comment, group_id, vk_token, owner_id, photo_id)

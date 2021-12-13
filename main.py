@@ -38,6 +38,13 @@ def download_random_comic():
     return comic_comment
 
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    load_dotenv()
+    vk_token = os.environ['ACCESS_TOKEN']
+    group_id = os.environ['GROUP_ID']
+    directory = 'images/'
+
+    Path(directory).mkdir(parents=True, exist_ok=True)
+    comic_comment = download_random_comic()
+
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

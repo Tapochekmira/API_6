@@ -61,6 +61,22 @@ def upload_comic_to_server(group_id, vk_token, directory):
         check_status(response)
     response = response.json()
     return response['server'], response['photo'], response['hash']
+
+
+def save_comic_to_album(group_id, vk_token, server, photo, hash):
+    save_comic_to_album_url = 'https://api.vk.com/method/photos.saveWallPhoto'
+    payload = {
+        'group_id': group_id,
+        'server': server,
+        'photo': photo,
+        'hash': hash,
+        'access_token': vk_token,
+        'v': '5.131'
+    }
+    response = requests.post(save_comic_to_album_url, params=payload)
+    check_status(response)
+    response = response.json()['response'][0]
+    return response["owner_id"], response["id"]
 if __name__ == '__main__':
     load_dotenv()
     vk_token = os.environ['ACCESS_TOKEN']
@@ -72,4 +88,10 @@ if __name__ == '__main__':
 
     server, photo, hash = upload_comic_to_server(group_id, vk_token, directory)
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    owner_id, photo_id = save_comic_to_album(
+        group_id,
+        vk_token,
+        server,
+        photo,
+        hash
+    )

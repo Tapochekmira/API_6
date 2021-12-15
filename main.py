@@ -65,10 +65,10 @@ def upload_comic_to_server(group_id, vk_token, directory, comic_file_name):
             'file1': file,
         }
         response = requests.post(server_url, files=files)
-        response.raise_for_status()
+    response.raise_for_status()
 
-        response = response.json()
-        check_status(response)
+    response = response.json()
+    check_status(response)
 
     return response['server'], response['photo'], response['hash']
 

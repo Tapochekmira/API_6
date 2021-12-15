@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 def check_status(response):
     if response.get('error'):
-        raise requests.exceptions.HTTPError(response=response)
+        raise requests.exceptions.HTTPError(response['error']['error_msg'])
 
 
 def get_random_comics_number():

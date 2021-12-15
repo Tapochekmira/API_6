@@ -73,13 +73,13 @@ def upload_comic_to_server(group_id, vk_token, directory, comic_file_name):
     return response['server'], response['photo'], response['hash']
 
 
-def save_comic_to_album(group_id, vk_token, server, photo, hash):
+def save_comic_to_album(group_id, vk_token, server, photo, comic_hash):
     comic_album_url = 'https://api.vk.com/method/photos.saveWallPhoto'
     payload = {
         'group_id': group_id,
         'server': server,
         'photo': photo,
-        'hash': hash,
+        'hash': comic_hash,
         'access_token': vk_token,
         'v': '5.131'
     }
@@ -123,13 +123,18 @@ if __name__ == '__main__':
     Path(directory).mkdir(parents=True, exist_ok=True)
     comic_comment = get_random_comic(directory, comic_file_name)
 
-    server, photo, hash = upload_comic_to_server(group_id, vk_token, directory,comic_file_name)
+    server, photo, comic_hash = upload_comic_to_server(
+        group_id,
+        vk_token,
+        directory,
+        comic_file_name
+    )
     owner_id, photo_id = save_comic_to_album(
         group_id,
         vk_token,
         server,
         photo,
-        hash
+        comic_hash
     )
     post_comic_to_wall(comic_comment, group_id, vk_token, owner_id, photo_id)
 

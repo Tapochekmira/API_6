@@ -27,9 +27,9 @@ def download_random_comic(directory):
 
     response = response.json()
     comic_comment = response['alt']
-    download_comic_url = response['img']
+    comic_image_url = response['img']
 
-    response = requests.get(download_comic_url)
+    response = requests.get(comic_image_url)
     response.raise_for_status()
 
     with open(f'{directory}comic.png', 'wb') as comic_file:
@@ -55,12 +55,12 @@ def get_upload_server_url(group_id, vk_token):
 
 
 def upload_comic_to_server(group_id, vk_token, directory):
-    upload_server_url = get_upload_server_url(group_id, vk_token)
+    server_url = get_upload_server_url(group_id, vk_token)
     with open(f'{directory}comic.png', 'rb') as file:
         files = {
             'file1': file,
         }
-        response = requests.post(upload_server_url, files=files)
+        response = requests.post(server_url, files=files)
         response.raise_for_status()
 
         response = response.json()
@@ -70,7 +70,7 @@ def upload_comic_to_server(group_id, vk_token, directory):
 
 
 def save_comic_to_album(group_id, vk_token, server, photo, hash):
-    save_comic_to_album_url = 'https://api.vk.com/method/photos.saveWallPhoto'
+    comic_album_url = 'https://api.vk.com/method/photos.saveWallPhoto'
     payload = {
         'group_id': group_id,
         'server': server,
@@ -79,7 +79,7 @@ def save_comic_to_album(group_id, vk_token, server, photo, hash):
         'access_token': vk_token,
         'v': '5.131'
     }
-    response = requests.post(save_comic_to_album_url, params=payload)
+    response = requests.post(comic_album_url, params=payload)
     response.raise_for_status()
 
     response = response.json()
@@ -90,7 +90,7 @@ def save_comic_to_album(group_id, vk_token, server, photo, hash):
 
 
 def post_comic_to_wall(comic_comment, group_id, vk_token, owner_id, photo_id):
-    post_comic_on_wall_url = 'https://api.vk.com/method/wall.post'
+    comic_wall_url = 'https://api.vk.com/method/wall.post'
     payload = {
         'owner_id': f'-{group_id}',
         'from_group': '1',
@@ -99,7 +99,7 @@ def post_comic_to_wall(comic_comment, group_id, vk_token, owner_id, photo_id):
         'access_token': vk_token,
         'v': '5.131'
     }
-    response = requests.get(post_comic_on_wall_url, params=payload)
+    response = requests.get(comic_wall_url, params=payload)
     response.raise_for_status()
     check_status(response.json())
 

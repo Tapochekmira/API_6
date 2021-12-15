@@ -19,15 +19,15 @@ def get_random_comics_number():
     return randint(1, current_comic_number)
 
 
-def download_random_comic(comic_image_url, directory):
+def download_random_comic(comic_image_url, directory, comic_file_name):
     response = requests.get(comic_image_url)
     response.raise_for_status()
 
-    with open(f'{directory}comic.png', 'wb') as comic_file:
+    with open(f'{directory}{comic_file_name}', 'wb') as comic_file:
         comic_file.write(response.content)
 
 
-def get_random_comic(directory):
+def get_random_comic(directory, comic_file_name):
     comic_number = get_random_comics_number()
     comic_url = f'https://xkcd.com/{comic_number}/info.0.json'
     response = requests.get(comic_url)
@@ -36,8 +36,8 @@ def get_random_comic(directory):
     response = response.json()
     comic_comment = response['alt']
     comic_image_url = response['img']
-    
-    download_random_comic(comic_image_url, directory)
+
+    download_random_comic(comic_image_url, directory, comic_file_name)
 
     return comic_comment
 
@@ -58,9 +58,9 @@ def get_upload_server_url(group_id, vk_token):
     return response['response']['upload_url']
 
 
-def upload_comic_to_server(group_id, vk_token, directory):
+def upload_comic_to_server(group_id, vk_token, directory, comic_file_name):
     server_url = get_upload_server_url(group_id, vk_token)
-    with open(f'{directory}comic.png', 'rb') as file:
+    with open(f'{directory}{comic_file_name}', 'rb') as file:
         files = {
             'file1': file,
         }
@@ -108,8 +108,8 @@ def post_comic_to_wall(comic_comment, group_id, vk_token, owner_id, photo_id):
     check_status(response.json())
 
 
-def delete_comic():
-    file_be_deleted_path = Path('images/comic.png')
+def delete_comic(directory, comic_file_name):
+    file_be_deleted_path = Path(f'{directory}{comic_file_name}')
     file_be_deleted_path.unlink()
 
 
@@ -118,11 +118,12 @@ if __name__ == '__main__':
     vk_token = os.environ['ACCESS_TOKEN']
     group_id = os.environ['GROUP_ID']
     directory = 'images/'
+    comic_file_name = 'comic.png'
 
     Path(directory).mkdir(parents=True, exist_ok=True)
-    comic_comment = get_random_comic(directory)
+    comic_comment = get_random_comic(directory, comic_file_name)
 
-    server, photo, hash = upload_comic_to_server(group_id, vk_token, directory)
+    server, photo, hash = upload_comic_to_server(group_id, vk_token, directory,comic_file_name)
     owner_id, photo_id = save_comic_to_album(
         group_id,
         vk_token,
@@ -132,4 +133,4 @@ if __name__ == '__main__':
     )
     post_comic_to_wall(comic_comment, group_id, vk_token, owner_id, photo_id)
 
-    delete_comic()
+    delete_comic(directory, comic_file_name)

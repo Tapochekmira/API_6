@@ -19,7 +19,7 @@ def get_random_comics_number():
     return randint(1, current_comic_number)
 
 
-def download_random_comic():
+def download_random_comic(directory):
     comic_number = get_random_comics_number()
     comic_url = f'https://xkcd.com/{comic_number}/info.0.json'
     response = requests.get(comic_url)
@@ -31,6 +31,7 @@ def download_random_comic():
 
     response = requests.get(download_comic_url)
     response.raise_for_status()
+
     with open(f'{directory}comic.png', 'wb') as comic_file:
         comic_file.write(response.content)
 
@@ -115,7 +116,7 @@ if __name__ == '__main__':
     directory = 'images/'
 
     Path(directory).mkdir(parents=True, exist_ok=True)
-    comic_comment = download_random_comic()
+    comic_comment = download_random_comic(directory)
 
     server, photo, hash = upload_comic_to_server(group_id, vk_token, directory)
     owner_id, photo_id = save_comic_to_album(

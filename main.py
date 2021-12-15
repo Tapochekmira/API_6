@@ -122,20 +122,20 @@ if __name__ == '__main__':
 
     Path(directory).mkdir(parents=True, exist_ok=True)
     comic_comment = get_random_comic(directory, comic_file_name)
-
-    server, photo, comic_hash = upload_comic_to_server(
-        group_id,
-        vk_token,
-        directory,
-        comic_file_name
-    )
-    owner_id, photo_id = save_comic_to_album(
-        group_id,
-        vk_token,
-        server,
-        photo,
-        comic_hash
-    )
-    post_comic_to_wall(comic_comment, group_id, vk_token, owner_id, photo_id)
-
-    delete_comic(directory, comic_file_name)
+    try:
+        server, photo, comic_hash = upload_comic_to_server(
+            group_id,
+            vk_token,
+            directory,
+            comic_file_name
+        )
+        owner_id, photo_id = save_comic_to_album(
+            group_id,
+            vk_token,
+            server,
+            photo,
+            comic_hash
+        )
+        post_comic_to_wall(comic_comment, group_id, vk_token, owner_id, photo_id)
+    finally:
+        delete_comic(directory, comic_file_name)

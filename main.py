@@ -7,8 +7,7 @@ from dotenv import load_dotenv
 
 
 def check_status(response):
-    response.raise_for_status()
-    if response.json().get('error'):
+    if response.get('error'):
         raise requests.exceptions.HTTPError(response=response)
 
 
@@ -46,9 +45,12 @@ def get_upload_server_url(group_id, vk_token):
         'v': '5.131'
     }
     response = requests.get(upload_url, params=payload)
+    response.raise_for_status()
+
+    response = response.json()
     check_status(response)
 
-    return response.json()['response']['upload_url']
+    return response['response']['upload_url']
 
 
 def upload_comic_to_server(group_id, vk_token, directory):
@@ -58,8 +60,11 @@ def upload_comic_to_server(group_id, vk_token, directory):
             'file1': file,
         }
         response = requests.post(upload_server_url, files=files)
+        response.raise_for_status()
+
+        response = response.json()
         check_status(response)
-    response = response.json()
+
     return response['server'], response['photo'], response['hash']
 
 
@@ -74,8 +79,12 @@ def save_comic_to_album(group_id, vk_token, server, photo, hash):
         'v': '5.131'
     }
     response = requests.post(save_comic_to_album_url, params=payload)
+    response.raise_for_status()
+
+    response = response.json()
     check_status(response)
-    response = response.json()['response'][0]
+
+    response = response['response'][0]
     return response["owner_id"], response["id"]
 
 
@@ -90,7 +99,8 @@ def post_comic_to_wall(comic_comment, group_id, vk_token, owner_id, photo_id):
         'v': '5.131'
     }
     response = requests.get(post_comic_on_wall_url, params=payload)
-    check_status(response)
+    response.raise_for_status()
+    check_status(response.json())
 
 
 def delete_comic():

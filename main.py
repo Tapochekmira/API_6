@@ -90,7 +90,7 @@ def save_comic_to_album(group_id, vk_token, server, photo, comic_hash):
     check_status(response)
 
     response = response['response'][0]
-    return response["owner_id"], response["id"]
+    return response['owner_id'], response['id']
 
 
 def post_comic_to_wall(comic_comment, group_id, vk_token, owner_id, photo_id):
@@ -137,5 +137,5 @@ if __name__ == '__main__':
             comic_hash
         )
         post_comic_to_wall(comic_comment, group_id, vk_token, owner_id, photo_id)
-    finally:
+    finally: 
         delete_comic(directory, comic_file_name)
